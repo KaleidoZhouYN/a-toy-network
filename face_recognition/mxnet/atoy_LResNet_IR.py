@@ -210,6 +210,20 @@ def residual_unit_v3(data, num_filter, stride, dim_match, name, bottle_neck,
                         name=name,
                         **kwargs,
                     )
+        
+        conv3 = Conv(data=act2,
+                    num_filter=num_filter,
+                    kernel=(1,1),
+                    stride=(1,1),
+                    pad=(0,0),
+                    no_bias=True,
+                    workspace=workspace,
+                    name=name+'_conv3')
+        bn4 = mx.sym.BatchNorm(data=conv3,
+                               fix_gamma=False,
+                               eps=2e-5,
+                               nomentum=bn_mom,
+                               name=name+'_bn4')
 
         if dim_match:
             shortcut = data
@@ -228,7 +242,7 @@ def residual_unit_v3(data, num_filter, stride, dim_match, name, bottle_neck,
                                         name=name + '_sc')
         if memonger:
             shortcut._set_attr(mirror_stage='True')
-        return bn3 + shortcut
+        return bn4 + shortcut
 
 
 def atoy_LResNet_IR(units, num_stages, filter_list, num_classes, bottle_neck):
