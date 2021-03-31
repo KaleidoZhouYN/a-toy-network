@@ -82,7 +82,7 @@ class BasicBlock(nn.Module):
         
         if self.use_spa:
             spa = self.spa_conv(out)
-            spa = self.spa_act(aw)
+            spa = self.spa_act(spa)
             out = out * spa
 
         if self.downsample is not None:
